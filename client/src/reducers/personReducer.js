@@ -4,6 +4,7 @@ import {
   DELETE_USER,
   EDIT_USER,
   SORT_USER,
+  FILTER_USER,
 } from "../actions/types";
 
 const initialState = {
@@ -15,6 +16,7 @@ const initialState = {
     age: "asc",
     gender: "asc",
   },
+  search: "",
 };
 
 export default function (state = initialState, action) {
@@ -55,15 +57,39 @@ export default function (state = initialState, action) {
       let name = action.payload;
       return {
         ...state,
-        items: state.items.sort((a, b) =>
-          state.direction[name] === "asc"
-            ? a[name] < b[name] && -1
-            : a[name] > b[name] && -1
-        ),
+        items: [
+          ...state.items.sort((a, b) =>
+            state.direction[name] === "asc"
+              ? a[name] < b[name] && -1
+              : a[name] > b[name] && -1
+          ),
+        ],
         direction: {
           [name]: state.direction[name] === "asc" ? "desc" : "asc",
         },
       };
+    case FILTER_USER:
+      console.log("sort filter");
+      const { search } = action;
+      // console.log(search);
+
+      const items = state.items.filter(
+        (item) =>
+          item.firstName.toLowerCase().includes(search.toLowerCase()) ||
+          item.lastName.toLowerCase().includes(search.toLowerCase()) ||
+          item.age.toString().includes(search.toString()) ||
+          item.gender.toLowerCase().includes(search.toLowerCase())
+      );
+      return { ...state, items, search };
+
+    // items: [...state.items.filter((item)=>
+    //   return (
+    //       user.firstName.toLowerCase().includes(search.toLowerCase()) ||
+    //   user.lastName.toLowerCase().includes(search.toLowerCase()) ||
+    //   user.age.toString().includes(search.toString()) ||
+    //   user.gender.toLowerCase().includes(search.toLowerCase())
+    //   )]}
+
     default:
       return state;
   }

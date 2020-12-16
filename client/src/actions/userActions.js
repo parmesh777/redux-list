@@ -4,6 +4,7 @@ import {
   DELETE_USER,
   EDIT_USER,
   SORT_USER,
+  FILTER_USER,
 } from "./types";
 import axios from "axios";
 
@@ -75,6 +76,15 @@ export function sortUser(name) {
     return dispatch({
       type: SORT_USER,
       payload: name,
+    });
+  };
+}
+export function filterUser(search) {
+  console.log("filtering...");
+  return (dispatch) => {
+    return dispatch({
+      type: FILTER_USER,
+      search,
     });
   };
 }

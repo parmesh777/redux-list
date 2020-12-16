@@ -35,7 +35,7 @@ class FrontPage extends Component {
     // },
   };
 
-  componentWillMount() {
+  componentDidMount() {
     this.props.fetchUsers();
   }
 
@@ -115,13 +115,13 @@ class FrontPage extends Component {
 
       visible: false,
     });
-
+    window.location = "/";
     this.setState({ visible: this.validate() ? false : true });
   };
 
-  handleChange = (e) => {
-    this.setState({ search: e.target.value });
-  };
+  // handleChange = (e) => {
+  //   this.setState({ search: e.target.value });
+  // };
 
   editUser = (currentUser) => {
     this.setState({

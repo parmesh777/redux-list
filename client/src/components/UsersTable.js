@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { InputGroup, FormControl, Button, Form } from "react-bootstrap";
-import { deleteUser, sortUser } from "../actions/userActions";
+import { deleteUser, sortUser, filterUser } from "../actions/userActions";
 import Pagination from "./Pagination";
 import { connect } from "react-redux";
 
@@ -8,6 +8,7 @@ class UsersTable extends Component {
   state = {
     currentPage: 1,
     personsPerPage: 3,
+    //  search: "",
   };
 
   firstPage = () => {
@@ -24,6 +25,9 @@ class UsersTable extends Component {
       });
     }
   };
+  // handleChange = (e) => {
+  //   this.setState({ search: e.target.value });
+  // };
 
   // sortUser = (name) => {
   //   // const users = this.state.users;
@@ -40,35 +44,34 @@ class UsersTable extends Component {
   //   // console.log(users);
   //   this.props.sortUser(name);
   // };
+  //filteredUsers = () => this.props.filterUser(this.state.search);
 
   render() {
-    const { deleteUser, editUser, sortUser, search, handleChange } = this.props;
+    const { deleteUser, editUser, sortUser, search, filterUser } = this.props;
 
     const onDelete = (id) => {
       deleteUser(id);
     };
 
-    const sortedUser = (name) => {
-      sortUser(name);
-    };
+    const sortedUser = (name) => sortUser(name);
 
-    const filteredUsers = this.props.users.filter((user) => {
-      return (
-        user.firstName.toLowerCase().includes(search.toLowerCase()) ||
-        user.lastName.toLowerCase().includes(search.toLowerCase()) ||
-        user.age.toString().includes(search.toString()) ||
-        user.gender.toLowerCase().includes(search.toLowerCase())
-      );
-    });
+    // const filteredUsers = this.props.users.filter((user) => {
+    //   return (
+    //     user.firstName.toLowerCase().includes(search.toLowerCase()) ||
+    //     user.lastName.toLowerCase().includes(search.toLowerCase()) ||
+    //     user.age.toString().includes(search.toString()) ||
+    //     user.gender.toLowerCase().includes(search.toLowerCase())
+    //   );
+    // });
 
     const { currentPage, personsPerPage } = this.state;
     const indexOfLastPerson = currentPage * personsPerPage;
     const indexOfFirstPerson = indexOfLastPerson - personsPerPage;
-    const currentPersons = filteredUsers.slice(
+    const currentPersons = this.props.users.slice(
       indexOfFirstPerson,
       indexOfLastPerson
     );
-    const totalPages = filteredUsers.length / personsPerPage;
+    const totalPages = this.props.users.length / personsPerPage;
 
     const nextPage = () => {
       if (this.state.currentPage < Math.ceil(totalPages)) {
@@ -103,7 +106,7 @@ class UsersTable extends Component {
             <FormControl
               type="text"
               value={search}
-              onChange={handleChange}
+              onChange={(e) => filterUser(e.target.value)}
               placeholder="Search Users...."
               aria-label="Default"
               aria-describedby="inputGroup-sizing-default"
@@ -172,7 +175,7 @@ class UsersTable extends Component {
 
           <Pagination
             personsPerPage={this.state.personsPerPage}
-            total={filteredUsers.length}
+            total={this.props.users.length}
             paginate={paginate}
           />
 
@@ -198,6 +201,9 @@ class UsersTable extends Component {
 
 const mapStateToProps = (state) => ({
   users: state.users.items,
+  search: state.users.search,
 });
 
-export default connect(mapStateToProps, { deleteUser, sortUser })(UsersTable);
+export default connect(mapStateToProps, { deleteUser, sortUser, filterUser })(
+  UsersTable
+);
